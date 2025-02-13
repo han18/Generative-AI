@@ -64,6 +64,14 @@ function showLocation() {
 function moveToNewLocation(newLocation) {
   const currentLocation = gameMap[gameState.currentRoom];
   if (currentLocation.directions[newLocation]) {
+    // Check if there is an item in the current location
+    if (currentLocation.item) {
+      // Add the item to the player's inventory
+      gameState.inventory.push(currentLocation.item);
+      console.log(`You picked up a ${currentLocation.item}.`);
+      // Remove the item from the location
+      delete currentLocation.item;
+    }
     gameState.currentRoom = currentLocation.directions[newLocation];
     showLocation();
   } else {
@@ -86,6 +94,47 @@ function startGame() {
     }
 
     // TODO: Add more commands for player actions, such as taking items.
+    // Function to take an item from the current location
+    function takeItem(itemName) {
+      const currentLocation = gameMap[gameState.currentRoom];
+      if (currentLocation.item && currentLocation.item === itemName) {
+        // Add the item to the player's inventory
+        gameState.inventory.push(currentLocation.item);
+        console.log(`You took the ${currentLocation.item}.`);
+        // Remove the item from the location
+        delete currentLocation.item;
+      } else {
+        console.log(`There is no ${itemName} to take here.`);
+      }
+    }
+
+    // Function to examine the current location
+    function examineLocation() {
+      const currentLocation = gameMap[gameState.currentRoom];
+      console.log(currentLocation.description);
+      if (currentLocation.item) {
+        console.log(`You see a ${currentLocation.item} here.`);
+      }
+    }
+
+    // Update the input handling in the rl.on("line") event
+    rl.on("line", (input) => {
+      if (input === "quit") {
+        gameState.gameActive = false;
+        rl.close();
+      } else if (input === "take") {
+        console.log("Take what? Specify the item name.");
+      } else if (input.startsWith("take ")) {
+        const itemName = input.slice(5).trim();
+        takeItem(itemName);
+      } else if (input === "examine") {
+        examineLocation();
+      } else if (input in gameMap[gameState.currentRoom].directions) {
+        moveToNewLocation(input);
+      } else {
+        console.log("Invalid command.");
+      }
+    });
     // TODO: Implement a help command that lists all possible actions.
   });
 }
