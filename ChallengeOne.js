@@ -58,6 +58,42 @@ function showLocation() {
     console.log(`You see a ${location.item} here.`);
   }
   // TODO: Implement a way to pick up items and add them to the inventory
+  // Function to display the player's inventory
+  function displayInventory() {
+    if (gameState.inventory.length === 0) {
+      console.log("Your inventory is empty.");
+    } else {
+      console.log("Your Inventory:");
+      gameState.inventory.forEach((item, index) => {
+        console.log(`${index + 1}. ${item}`);
+      });
+    }
+  }
+
+  // Update the input handling in the rl.on("line") event
+  rl.on("line", (input) => {
+    if (input === "quit") {
+      gameState.gameActive = false;
+      rl.close();
+    } else if (input === "help") {
+      displayHelp();
+    } else if (input === "take") {
+      console.log("Take what? Specify the item name.");
+    } else if (input.startsWith("take ")) {
+      const itemName = input.slice(5).trim();
+      takeItem(itemName);
+    } else if (input === "examine") {
+      examineLocation();
+    } else if (input === "inventory") {
+      displayInventory();
+    } else if (input in gameMap[gameState.currentRoom].directions) {
+      moveToNewLocation(input);
+    } else {
+      console.log(
+        "Invalid command. Type 'help' to see a list of possible actions."
+      );
+    }
+  });
 }
 
 // Function to move to a new location
