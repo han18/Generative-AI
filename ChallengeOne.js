@@ -1,3 +1,5 @@
+// This is ALAB 327.3.4 - An AI Coding Challenge
+
 // Import required standard module
 const readline = require("readline");
 const fs = require("fs");
