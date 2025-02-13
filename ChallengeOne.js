@@ -136,6 +136,42 @@ function startGame() {
       }
     });
     // TODO: Implement a help command that lists all possible actions.
+    // Function to display a list of possible actions
+    function displayHelp() {
+      console.log("Possible Actions:");
+      console.log("- Type 'take <item>' to pick up a specific item.");
+      console.log(
+        "- Type 'examine' to get more information about the current location."
+      );
+      console.log(
+        "- Type a direction (e.g., north, south, east, west) to move to a new location."
+      );
+      console.log("- Type 'help' to see this list of possible actions.");
+      console.log("- Type 'quit' to exit the game.");
+    }
+
+    // Update the input handling in the rl.on("line") event
+    rl.on("line", (input) => {
+      if (input === "quit") {
+        gameState.gameActive = false;
+        rl.close();
+      } else if (input === "help") {
+        displayHelp();
+      } else if (input === "take") {
+        console.log("Take what? Specify the item name.");
+      } else if (input.startsWith("take ")) {
+        const itemName = input.slice(5).trim();
+        takeItem(itemName);
+      } else if (input === "examine") {
+        examineLocation();
+      } else if (input in gameMap[gameState.currentRoom].directions) {
+        moveToNewLocation(input);
+      } else {
+        console.log(
+          "Invalid command. Type 'help' to see a list of possible actions."
+        );
+      }
+    });
   });
 }
 
