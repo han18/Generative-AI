@@ -209,6 +209,49 @@ function startGame() {
       }
     });
   });
+
+  // Function to handle a puzzle encounter
+  function puzzleEncounter() {
+    console.log("You encounter a mysterious puzzle...");
+    console.log("Solve the puzzle to proceed!");
+
+    // Implement your puzzle logic here
+    // For example, you can ask the player to input a specific code or solve a riddle
+
+    // If the player solves the puzzle
+    console.log("Congratulations! You solved the puzzle and can proceed.");
+  }
+
+  // Update the input handling in the rl.on("line") event
+  rl.on("line", (input) => {
+    if (input === "quit") {
+      gameState.gameActive = false;
+      rl.close();
+    } else if (input === "help") {
+      displayHelp();
+    } else if (input === "take") {
+      console.log("Take what? Specify the item name.");
+    } else if (input.startsWith("take ")) {
+      const itemName = input.slice(5).trim();
+      takeItem(itemName);
+    } else if (input === "examine") {
+      examineLocation();
+    } else if (input === "inventory") {
+      displayInventory();
+    } else if (input === "save") {
+      saveGame();
+    } else if (input === "load") {
+      loadGame();
+    } else if (input === "solve puzzle") {
+      puzzleEncounter();
+    } else if (input in gameMap[gameState.currentRoom].directions) {
+      moveToNewLocation(input);
+    } else {
+      console.log(
+        "Invalid command. Type 'help' to see a list of possible actions."
+      );
+    }
+  });
 }
 
 // Initiate the game
