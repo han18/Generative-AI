@@ -252,6 +252,54 @@ function startGame() {
       );
     }
   });
+
+  // Function to check for the victory condition
+  function checkVictoryCondition() {
+    if (
+      gameState.currentRoom === "finalRoom" &&
+      gameState.inventory.includes("key")
+    ) {
+      console.log(
+        "Congratulations! You have found the key and unlocked the final room."
+      );
+      console.log("You have successfully completed the game. Well done!");
+      gameState.gameActive = false; // Set gameActive to false to end the game
+    }
+  }
+
+  // Update the input handling in the rl.on("line") event
+  rl.on("line", (input) => {
+    if (input === "quit") {
+      gameState.gameActive = false;
+      rl.close();
+    } else if (input === "help") {
+      displayHelp();
+    } else if (input === "take") {
+      console.log("Take what? Specify the item name.");
+    } else if (input.startsWith("take ")) {
+      const itemName = input.slice(5).trim();
+      takeItem(itemName);
+      checkVictoryCondition(); // Check for victory after taking an item
+    } else if (input === "examine") {
+      examineLocation();
+    } else if (input === "inventory") {
+      displayInventory();
+    } else if (input === "save") {
+      saveGame();
+    } else if (input === "load") {
+      loadGame();
+    } else if (input === "solve puzzle") {
+      puzzleEncounter();
+      checkVictoryCondition(); // Check for victory after solving a puzzle
+    } else if (input in gameMap[gameState.currentRoom].directions) {
+      moveToNewLocation(input);
+      checkVictoryCondition(); // Check for victory after moving to a new location
+    } else {
+      console.log(
+        "Invalid command. Type 'help' to see a list of possible actions."
+      );
+    }
+  });
 }
 
 // Initiate the game
